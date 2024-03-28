@@ -39,7 +39,7 @@ export default function ProfileSetupScreen() {
     
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-      <Text>Profile Setup</Text>
+      <Text>Setup Profile</Text>
       <TextInput
         placeholder="Name"
         value={profile.name}
