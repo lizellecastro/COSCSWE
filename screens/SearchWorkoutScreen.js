@@ -1,27 +1,24 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Flatlist } from 'react-native';
-import firebase from 'firebase/app';
-import 'firebase/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function SearchWorkoutScreen() {
   const [searchTerm, setSearchTerm] = useState('');
   const [workouts, setWorkouts] = useState([]);
 
-  const handleSearch = () => {
-    firebase.firestore()
-      .collection('workouts')
-      .where('name', '>=', searchTerm)
-      .get()
-      .then(querySnapshot => {
-        const workoutsList = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setWorkouts(workoutsList);
-      })
-      .catch(error => {
-        console.error('Error searching workouts: ', error);
-      });
+  const handleSearch = async () => {
+    try {
+      const q = query(collection(db, 'workouts'), where('name', '>=', searchTerm));
+      const querySnapshot = await getDocs(q);
+      const workoutsList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setWorkouts(workoutsList);
+    } catch (error) {
+      Alert.alert('Search Workout', 'Error searching workouts: ' + error.message);
+    }
   };
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
