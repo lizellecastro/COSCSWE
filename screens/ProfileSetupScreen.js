@@ -31,9 +31,9 @@ export default function ProfileSetupScreen() {
         goals: goalsArray,
       });
 
-      Alert.alert('Profile Setup', 'Profile setup successful');
+      Alert.alert('Setup Profile', 'Profile setup successful');
     } catch (error) {
-      Alert.alert('Profile Setup', 'Error setting up profile: ' + error.message);
+      Alert.alert('Setup Profile', 'Error setting up profile: ' + error.message);
     }
   };
     
