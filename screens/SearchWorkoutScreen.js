@@ -35,7 +35,7 @@ export default function SearchWorkoutScreen() {
         renderItem={({ item }) => (
           <View style={{ padding: 10, marginTop: 10, backgroundColor: '#ddd' }}>
             <Text>{item.name}</Text>
-          </view>
+          </View>
         )}
       />
     </View>
