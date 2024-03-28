@@ -19,11 +19,12 @@ export default function ProfileSetupScreen() {
   };
 
   const handleSubmit = async () => {
-    const { name, age, fitnessLevel, goals } = profile;
-    const goalsArray = goals.split(',').map((goal) => goal.trim()); // Assuming goals are comma-separated
-    const userId = auth().currentUser.uid;
+    try {
+      const { name, age, fitnessLevel, goals } = profile;
+      const goalsArray = goals.split(',').map((goal) => goal.trim()); // Assuming goals are comma-separated
+      const userId = auth.currentUser.uid;
 
-    await setDoc(doc(db, 'user_profiles', userId), {
+      await setDoc(doc(db, 'user_profiles', userId), {
         name,
         age,
         fitnessLevel,
