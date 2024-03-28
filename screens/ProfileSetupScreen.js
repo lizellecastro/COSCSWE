@@ -41,22 +41,26 @@ export default function ProfileSetupScreen() {
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
       <Text>Setup Profile</Text>
       <TextInput
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: '100%', marginBottom: 20, paddingHorizontal: 10 }}
         placeholder="Name"
         value={profile.name}
         onChangeText={text => handleInputChange('name', text)}
       />
       <TextInput
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: '100%', marginBottom: 20, paddingHorizontal: 10 }}
         placeholder="Age"
         value={profile.age}
         onChangeText={text => handleInputChange('age', text)}
         keyboardType="numeric"
       />
       <TextInput
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: '100%', marginBottom: 20, paddingHorizontal: 10 }}
         placeholder="Fitness Level"
         value={profile.fitnessLevel}
         onChangeText={text => handleInputChange('fitnessLevel', text)}
       />
       <TextInput
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: '100%', marginBottom: 20, paddingHorizontal: 10 }}
         placeholder="Goals (comma-separated)"
         value={profile.goals}
         onChangeText={text => handleInputChange('goals', text)}
