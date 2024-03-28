@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
 import { doc, setDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
