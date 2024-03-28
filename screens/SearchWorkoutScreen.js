@@ -34,7 +34,7 @@ export default function SearchWorkoutScreen() {
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <View style={{ padding: 10, marginTop: 10, backgroundColor: '#ddd' }}>
-            <Text>{item.name}</Text>}>
+            <Text>{item.name}</Text>
           </view>
         )}
       />
