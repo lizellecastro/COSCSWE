@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Flatlist } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, Alert } from 'react-native';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -32,7 +32,11 @@ export default function SearchWorkoutScreen() {
       <FlatList
         data={workouts}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => <Text>{item.name}</Text>}
+        renderItem={({ item }) => (
+          <View style={{ padding: 10, marginTop: 10, backgroundColor: '#ddd' }}>
+            <Text>{item.name}</Text>}>
+          </view>
+        )}
       />
     </View>
   );
