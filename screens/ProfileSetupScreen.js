@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
+import { db, auth } from '../firebase';
 
 export default function ProfileSetupScreen() {
   const [profile, setProfile] = useState({
@@ -18,27 +18,24 @@ export default function ProfileSetupScreen() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { name, age, fitnessLevel, goals } = profile;
-    const goalsArray = goals.split(',').map(goal => goal.trim()); // Assuming goals are comma-separated
-    const userId = firebase.auth().currentUser.uid;
+    const goalsArray = goals.split(',').map((goal) => goal.trim()); // Assuming goals are comma-separated
+    const userId = auth().currentUser.uid;
 
-    firebase.firestore()
-      .collection('user_profiles')
-      .doc(userId)
-      .set({
+    await setDoc(doc(db, 'user_profiles', userId), {
         name,
         age,
         fitnessLevel,
-        goals: goalsArray
-      })
-      .then(() => {
-        Alert.alert('Profile Setup', 'Profile setup successful');
-      })
-      .catch(error => {
-        Alert.alert('Profile Setup', 'Error setting up profile: ' + error.message);
+        goals: goalsArray,
       });
+
+      Alert.alert('Profile Setup', 'Profile setup successful');
+    } catch (error) {
+      Alert.alert('Profile Setup', 'Error setting up profile: ' + error.message);
+    }
   };
+    
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
       <Text>Profile Setup</Text>
