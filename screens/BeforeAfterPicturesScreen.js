@@ -132,15 +132,15 @@ export default function BeforeAfterPicturesScreen() {
       </View>
       <Button title="Upload Images" onPress={handleUpload} />
       <ScrollView horizontal>
-        <View style={styles.comparisonImagesContainer}>
-          {comparisonImages.map((images, index) => (
-            <View key={index} style={styles.comparisonImagesWrapper}>
-              <Image source={{ uri: images.before }} style={styles.comparisonImage} />
-              <Image source={{ uri: images.after }} style={styles.comparisonImage} />
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+  <View style={styles.comparisonImagesContainer}>
+    {comparisonImages.map((image, index) => (
+      <View key={index} style={styles.comparisonImagesWrapper}>
+        <Image source={{ uri: image.uri }} style={styles.comparisonImage} />
+      </View>
+    ))}
+  </View>
+</ScrollView>
+
     </View>
   );
 }
