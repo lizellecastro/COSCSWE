@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Image, StyleSheet, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { firestore } from '../firebase'; // Import your Firebase Firestore instance
+import { db, auth } from '../firebase';
+import { collection, doc, setDoc, getDocs, query, where } from 'firebase/firestore';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function BeforeAfterPicturesScreen() {
   const [beforeImage, setBeforeImage] = useState(null);
@@ -9,6 +11,7 @@ export default function BeforeAfterPicturesScreen() {
   const [comparisonImages, setComparisonImages] = useState([]);
 
   const pickImage = async (type) => {
+    console.log(`Picking image for: ${type}`); // Debug log
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -16,40 +19,103 @@ export default function BeforeAfterPicturesScreen() {
       quality: 1,
     });
 
-    if (!result.cancelled) {
+    console.log(result); // Log the result to see what's returned
+
+    if (!result.cancelled && result.assets && result.assets.length > 0) {
+      const uri = result.assets[0].uri;
+      console.log(`Selected image URI: ${uri}`); // Confirm URI is present
       if (type === 'before') {
-        setBeforeImage(result.uri);
-      } else {
-        setAfterImage(result.uri);
+        setBeforeImage(uri);
+      } else if (type === 'after') {
+        setAfterImage(uri);
       }
     }
-  };
+};
 
-  const uploadImagesToFirestore = async () => {
+  
+  console.log('Before Image URI:', beforeImage);
+  console.log('After Image URI:', afterImage);
+
+  // This function handles the upload to Firebase Storage and then saves the download URL in Firestore
+  const handleUpload = async () => {
+    if (!beforeImage || !afterImage) {
+      Alert.alert("Image Upload", "Please select both before and after images.");
+      return;
+    }
     try {
-      const beforeImageRef = await uploadImageToFirestore(beforeImage, 'before');
-      const afterImageRef = await uploadImageToFirestore(afterImage, 'after');
-      setComparisonImages([...comparisonImages, { before: beforeImageRef, after: afterImageRef }]);
-      Alert.alert('Images Uploaded', 'Images uploaded successfully.');
+      const beforeImageURL = await uploadImageAndStoreURL(beforeImage, 'before');
+      const afterImageURL = await uploadImageAndStoreURL(afterImage, 'after');
+      
+      setComparisonImages([...comparisonImages, { before: beforeImageURL, after: afterImageURL }]);
+      Alert.alert('Success', 'Images uploaded successfully');
     } catch (error) {
-      Alert.alert('Image Upload', 'An error occurred while uploading the images.');
+      Alert.alert('Error', 'Failed to upload images');
       console.error(error);
     }
   };
 
-  const uploadImageToFirestore = async (uri, type) => {
-    try {
-      const imageRef = firestore.collection('comparisonImages').doc();
-      await imageRef.set({
-        uri,
-        type,
-        uploadedAt: new Date(),
-      });
-      return imageRef.id;
-    } catch (error) {
-      throw error;
+
+  
+  // This function uploads the image to Firebase Storage and then saves the URL in Firestore
+  const uploadImageAndStoreURL = async (uri, type) => {
+    if (!auth.currentUser) {
+        console.error("No authenticated user.");
+        return; // Or handle this scenario appropriately
     }
-  };
+    
+    const uid = auth.currentUser.uid; // Get the UID of the currently logged-in user
+
+    try {
+        const storage = getStorage();
+        const imageName = `${type}_${new Date().getTime()}`; // Create a unique image name
+        const ref = storageRef(storage, `images/${imageName}`);
+        
+        // Convert the local file URI to a blob
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        
+        // Upload the image to Firebase Storage
+        await uploadBytes(ref, blob);
+        
+        // Get the download URL
+        const downloadURL = await getDownloadURL(ref);
+
+        // Save this downloadURL in Firestore with the UID
+        const firestoreRef = doc(collection(db, 'comparisonImages'));
+        await setDoc(firestoreRef, {
+            uri: downloadURL,
+            type,
+            uploadedAt: new Date(),
+            uid, // Include the UID in the document
+        });
+
+        return downloadURL; // Return the download URL for display or further use
+    } catch (error) {
+        console.error("Error uploading image and storing URL:", error);
+        throw error; // Rethrow or handle error appropriately
+    }
+};
+  
+  // New function to fetch image URLs from Firestore on component mount
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (!auth.currentUser) return; // Ensure there is a logged-in user
+      
+      const userUid = auth.currentUser.uid;
+      const querySnapshot = await getDocs(query(collection(db, 'comparisonImages'), where('uid', '==', userUid)));
+      const images = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        images.push({ uri: data.uri, type: data.type });
+      });
+      
+      setComparisonImages(images);
+    };
+  
+    fetchImages();
+  }, []);
+  
 
   return (
     <View style={styles.container}>
@@ -64,7 +130,7 @@ export default function BeforeAfterPicturesScreen() {
           {afterImage && <Image source={{ uri: afterImage }} style={styles.image} />}
         </View>
       </View>
-      <Button title="Upload Images" onPress={uploadImagesToFirestore} />
+      <Button title="Upload Images" onPress={handleUpload} />
       <ScrollView horizontal>
         <View style={styles.comparisonImagesContainer}>
           {comparisonImages.map((images, index) => (
