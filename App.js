@@ -1,9 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import PushNotification from 'react-native-push-notification'; //For the push notification
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import ProfileSetupScreen from './screens/ProfileSetupScreen';
@@ -14,18 +13,6 @@ import BeforeAfterPicturesScreen from './screens/BeforeAfterPicturesScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  useEffect(() => {
-    // Initialize push notification library
-    PushNotification.configure({
-      // Configuration options
-    });
-
-    // Cleanup function
-    return () => {
-      // Clean up any subscriptions or resources
-    };
-  }, []);
-
   return (
     <NavigationContainer>
       <Stack.Navigator>
