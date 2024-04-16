@@ -13,30 +13,35 @@ const LoginScreen = () => {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-        if (user) {
-            navigation.replace("Home")
+      if (user) {
+        // Check if the logged-in user is an admin
+        if (user.email === 'lizelle@test.com') {
+          navigation.replace("AdminHome");
+        } else {
+          navigation.replace("Home");
         }
-    })
-    return unsubscribe
-  }, [])
+      }
+    });
+    return unsubscribe;
+  }, []);
+
 
   const handleSignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log('Registered with: ',user.email);
-    })
-    .catch(error => alert(error.message))
-  }
+      .then(userCredential => {
+        console.log('Registered with:', userCredential.user.email);
+      })
+      .catch(error => alert(error.message));
+  };
 
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log('Logged in with: ', user.email);
-    })
-    .catch(error => alert(error.message))
-  }
+      .then(userCredential => {
+        console.log('Logged in with:', userCredential.user.email);
+      })
+      .catch(error => alert(error.message));
+  };
+
 
   return (
     <KeyboardAvoidingView

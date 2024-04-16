@@ -9,6 +9,7 @@ import ProfileSetupScreen from './screens/ProfileSetupScreen';
 import SearchWorkoutScreen from './screens/SearchWorkoutScreen';
 import ExerciseGoalsScreen from './screens/ExerciseGoalsScreen';
 import BeforeAfterPicturesScreen from './screens/BeforeAfterPicturesScreen';
+import AdminHomeScreen from './screens/AdminHomeScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ export default function App() {
         <Stack.Screen name="SearchWorkout" component={SearchWorkoutScreen} />
         <Stack.Screen name="ExerciseGoals" component={ExerciseGoalsScreen} />
         <Stack.Screen name="BeforeAfterPictures" component={BeforeAfterPicturesScreen} />
+        <Stack.Screen name="AdminHome" component={AdminHomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
