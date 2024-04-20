@@ -17,6 +17,7 @@ const AdminHomeScreen = ({ navigation }) => {
     return (
       <View style={styles.container}>
         <Text>Admin Home Screen</Text>
+        <Button title="Manage Workouts" onPress={() => navigation.navigate('ManageWorkouts')} />
         <Button title="Log Out" onPress={handleSignOut} />
       </View>
     );

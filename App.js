@@ -10,6 +10,7 @@ import SearchWorkoutScreen from './screens/SearchWorkoutScreen';
 import ExerciseGoalsScreen from './screens/ExerciseGoalsScreen';
 import BeforeAfterPicturesScreen from './screens/BeforeAfterPicturesScreen';
 import AdminHomeScreen from './screens/AdminHomeScreen';
+import ManageWorkoutScreen from './screens/ManageWorkoutScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,7 @@ export default function App() {
         <Stack.Screen name="ExerciseGoals" component={ExerciseGoalsScreen} />
         <Stack.Screen name="BeforeAfterPictures" component={BeforeAfterPicturesScreen} />
         <Stack.Screen name="AdminHome" component={AdminHomeScreen} />
+        <Stack.Screen name="ManageWorkouts" component={ManageWorkoutScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
