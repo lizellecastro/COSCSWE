@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth, signOut } from '../firebase';
-
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const userId = auth.currentUser.uid;
+        const profileDoc = await getDoc(doc(db, 'user_profiles', userId));
+        if (profileDoc.exists()) {
+          setProfile(profileDoc.data());
+        } else {
+          setProfile(null); // Profile doesn't exist
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -20,7 +40,17 @@ const HomeScreen = () => {
     <ImageBackground source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="repeat">
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.userInfo}>
-          <Text style={styles.userEmail}>Email: {auth.currentUser?.email}</Text>
+          {profile ? (
+            <>
+              <Text style={styles.userEmail}>Email: {auth.currentUser?.email}</Text>
+              <Text style={styles.userProfileInfo}>Name: {profile.name}</Text>
+              <Text style={styles.userProfileInfo}>Age: {profile.age}</Text>
+              <Text style={styles.userProfileInfo}>Fitness Level: {profile.fitnessLevel}</Text>
+              <Text style={styles.userProfileInfo}>Goals: {profile.goals.join(', ')}</Text>
+            </>
+          ) : (
+            <Text>No profile information available</Text>
+          )}
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('ProfileSetup')} style={styles.button}>
@@ -51,8 +81,6 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'cover',
     justifyContent: 'center',
-    
-
   },
   container: {
     flexGrow: 1,
@@ -67,6 +95,10 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  userProfileInfo: {
+    color: '#000',
+    fontSize: 16,
   },
   buttonContainer: {
     alignItems: 'center',
