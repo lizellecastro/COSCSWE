@@ -1,85 +1,100 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Make sure to import from '@react-navigation/native'
 import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { auth, signOut } from '../firebase';
+
 
 const HomeScreen = () => {
   const navigation = useNavigation();
 
-  const handleSignOut = () => {
-    signOut(auth).then(() => {
-      navigation.replace("Login");
-    }).catch(error => alert(error.message));
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.replace('Login');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <Text>Email: {auth.currentUser?.email}</Text>
-      <TouchableOpacity 
-        onPress={() => navigation.navigate('ProfileSetup')} 
-        style={styles.buttonProfile}
-      >
-        <Text style={styles.buttonText}>Setup Profile</Text>
-      </TouchableOpacity>
-      <TouchableOpacity 
-        onPress={() => navigation.navigate('SearchWorkout')} 
-        style={styles.buttonProfile}
-      >
-        <Text style={styles.buttonText}>Search Workout</Text>
-      </TouchableOpacity>
-      <TouchableOpacity 
-        onPress={() => navigation.navigate('ExerciseGoals')} 
-        style={styles.buttonProfile}
-      >
-        <Text style={styles.buttonText}>Exercise Goals</Text>
-      </TouchableOpacity>
-      <TouchableOpacity 
-        onPress={() => navigation.navigate('BeforeAfterPictures')} 
-        style={styles.buttonProfile}
-      >
-        <Text style={styles.buttonText}>Progress Pictures</Text>
-      </TouchableOpacity>
-
-      {/* Adding some space between the buttons */}
-      <View style={{ marginBottom: 20 }} />
-
-      <TouchableOpacity
-        onPress={handleSignOut}
-        style={styles.button}
-      >
-        <Text style={styles.buttonText}>Sign out</Text>
-      </TouchableOpacity>
-    </View>
+    <ImageBackground source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="repeat">
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.userInfo}>
+          <Text style={styles.userEmail}>Email: {auth.currentUser?.email}</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate('ProfileSetup')} style={styles.button}>
+            <Text style={styles.buttonText}>Setup Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('SearchWorkout')} style={styles.button}>
+            <Text style={styles.buttonText}>Search Workout</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('ExerciseGoals')} style={styles.button}>
+            <Text style={styles.buttonText}>Exercise Goals</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('BeforeAfterPictures')} style={styles.button}>
+            <Text style={styles.buttonText}>Progress Pictures</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
+          <Text style={styles.signOutText}>Sign out</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  backgroundImage: {
     flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    
+
+  },
+  container: {
+    flexGrow: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 60, // Adjust as needed to create space from the top
+    paddingVertical: 50,
+  },
+  userInfo: {
+    marginBottom: 20,
+  },
+  userEmail: {
+    color: '#000',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
   },
   button: {
-    backgroundColor: '#0782F9',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
     width: '60%',
-    padding: 15,
+    paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 40,
-  },
-  buttonProfile: {
-    backgroundColor: '#9C27B0', // Purple color
-    width: '60%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 40, // Adjust or remove as per your layout needs
+    marginBottom: 20,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: '700',
+    color: '#333',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  signOutButton: {
+    backgroundColor: '#f44336',
+    width: '60%',
+    paddingVertical: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  signOutText: {
+    color: '#fff',
+    fontWeight: 'bold',
     fontSize: 16,
   },
 });
