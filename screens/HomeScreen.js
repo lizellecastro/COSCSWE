@@ -46,7 +46,7 @@ const HomeScreen = () => {
               <Text style={styles.userProfileInfo}>Name: {profile.name}</Text>
               <Text style={styles.userProfileInfo}>Age: {profile.age}</Text>
               <Text style={styles.userProfileInfo}>Fitness Level: {profile.fitnessLevel}</Text>
-              <Text style={styles.userProfileInfo}>Goals: {profile.goals.join(', ')}</Text>
+              <Text style={styles.userProfileInfo}>Goals: {profile.goals}</Text>
             </>
           ) : (
             <Text>No profile information available</Text>
