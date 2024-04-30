@@ -12,6 +12,8 @@ import BeforeAfterPicturesScreen from './screens/BeforeAfterPicturesScreen';
 import AdminHomeScreen from './screens/AdminHomeScreen';
 import ManageWorkoutScreen from './screens/ManageWorkoutScreen';
 import ViewEditProfileScreen from './screens/ViewEditProfileScreen';
+import GoalMonitoringScreen from './screens/GoalMonitoringScreen';
+import RealTimeDataScreen from './screens/RealTimeDataScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +30,8 @@ export default function App() {
         <Stack.Screen name="AdminHome" component={AdminHomeScreen} />
         <Stack.Screen name="ManageWorkouts" component={ManageWorkoutScreen} />
         <Stack.Screen name="ViewEditProfile" component={ViewEditProfileScreen} />
+        <Stack.Screen name="GoalMonitoring" component={GoalMonitoringScreen} />
+        <Stack.Screen name="RealTimeData" component={RealTimeDataScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

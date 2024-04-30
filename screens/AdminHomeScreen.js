@@ -19,6 +19,8 @@ const AdminHomeScreen = ({ navigation }) => {
         <Text>Admin Home Screen</Text>
         <Button title="Manage Workouts" onPress={() => navigation.navigate('ManageWorkouts')} />
         <Button title="View and Edit Profiles" onPress={() => navigation.navigate('ViewEditProfile')} />
+        <Button title="Goal Monitoring" onPress={() => navigation.navigate('GoalMonitoring')} />
+        <Button title="Real-Time Data" onPress={() => navigation.navigate('RealTimeData')} />
         <Button title="Log Out" onPress={handleSignOut} />
       </View>
     );
