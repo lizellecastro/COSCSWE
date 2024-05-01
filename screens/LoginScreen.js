@@ -1,15 +1,27 @@
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, TouchableOpacity, StyleSheet, Text, TextInput, View, ImageBackground } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, TouchableOpacity, StyleSheet, Text, TextInput, View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '../firebase';
-
-const backgroundImage = require('../assets/test.jpg');
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        // Check if the logged-in user is an admin
+        if (user.email === 'lizelle@test.com') {
+          navigation.replace('AdminHome');
+        } else {
+          navigation.replace('Home');
+        }
+      }
+    });
+    return unsubscribe;
+  }, []);
 
   const handleSignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
@@ -28,37 +40,34 @@ const LoginScreen = () => {
   };
 
   return (
-    <ImageBackground source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="repeat">
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <View style={styles.overlay}>
-          <Text style={styles.welcome}>Welcome to</Text>
-          <Text style={styles.appName}> Active Path🔥</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="Email"
-              value={email}
-              onChangeText={text => setEmail(text)}
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="Password"
-              value={password}
-              onChangeText={text => setPassword(text)}
-              style={styles.input}
-              secureTextEntry
-            />
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={handleLogin} style={styles.button}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleSignUp} style={[styles.button, styles.buttonOutline]}>
-              <Text style={styles.buttonOutlineText}>Register</Text>
-            </TouchableOpacity>
-          </View>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <Image source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="cover" />
+      <View style={styles.overlay}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            placeholder="Email"
+            value={email}
+            onChangeText={text => setEmail(text)}
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            value={password}
+            onChangeText={text => setPassword(text)}
+            style={styles.input}
+            secureTextEntry
+          />
         </View>
-      </KeyboardAvoidingView>
-    </ImageBackground>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleLogin} style={styles.button}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleSignUp} style={[styles.button, styles.buttonOutline]}>
+            <Text style={styles.buttonOutlineText}>Register</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -71,35 +80,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backgroundImage: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
   overlay: {
+    flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.3)', // Adjust the opacity as needed
     justifyContent: 'center',
     alignItems: 'center',
-    width: '80%', // Adjust the width of the container
-    padding: 20, // Adjust the padding of the container
-    borderRadius: 10, // Adjust the border radius of the container
-  },
-  welcome: {
-    fontSize: 36, // Adjust the font size as needed
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
-  },
-  appName: {
-    fontSize: 36, // Adjust the font size as needed
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 20,
   },
   inputContainer: {
-    width: '100%', // Adjust the width of the input container
-    marginBottom: 20, // Adjust the margin bottom of the input container
+    width: '80%'
   },
   input: {
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
@@ -109,8 +103,10 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   buttonContainer: {
-    width: '100%', // Adjust the width of the button container
-    alignItems: 'center', // Center align the buttons
+    width: '60%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
   },
   button: {
     backgroundColor: '#0782F9',
@@ -118,10 +114,10 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 10, // Adjust the margin bottom of the button
   },
   buttonOutline: {
     backgroundColor: '#fff',
+    marginTop: 5,
     borderColor: '#0782F9',
     borderWidth: 2,
   },
