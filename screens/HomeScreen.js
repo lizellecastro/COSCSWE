@@ -5,6 +5,38 @@ import { auth, signOut } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
+const backgroundImage = require('../assets/test.jpg');
+
+const ProfileInfoCard = ({ email, name, age, fitnessLevel, goals }) => {
+  return (
+    <View style={styles.profileInfoCard}>
+      <View style={styles.profileInfoTitle}>
+        <Text style={styles.profileInfoTitleText}>User's Profile:</Text>
+      </View>
+      <View style={styles.profileInfoRow}>
+        <Text style={styles.profileInfoLabel}>Email:</Text>
+        <Text style={styles.profileInfoValue}>{email}</Text>
+      </View>
+      <View style={styles.profileInfoRow}>
+        <Text style={styles.profileInfoLabel}>Name:</Text>
+        <Text style={styles.profileInfoValue}>{name}</Text>
+      </View>
+      <View style={styles.profileInfoRow}>
+        <Text style={styles.profileInfoLabel}>Age:</Text>
+        <Text style={styles.profileInfoValue}>{age}</Text>
+      </View>
+      <View style={styles.profileInfoRow}>
+        <Text style={styles.profileInfoLabel}>Fitness Level:</Text>
+        <Text style={styles.profileInfoValue}>{fitnessLevel}</Text>
+      </View>
+      <View style={styles.profileInfoRow}>
+        <Text style={styles.profileInfoLabel}>Goals:</Text>
+        <Text style={styles.profileInfoValue}>{goals}</Text>
+      </View>
+    </View>
+  );
+};
+
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [profile, setProfile] = useState(null);
@@ -39,32 +71,36 @@ const HomeScreen = () => {
   return (
     <ImageBackground source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="repeat">
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.userInfo}>
-          {profile ? (
-            <>
-              <Text style={styles.userEmail}>Email: {auth.currentUser?.email}</Text>
-              <Text style={styles.userProfileInfo}>Name: {profile.name}</Text>
-              <Text style={styles.userProfileInfo}>Age: {profile.age}</Text>
-              <Text style={styles.userProfileInfo}>Fitness Level: {profile.fitnessLevel}</Text>
-              <Text style={styles.userProfileInfo}>Goals: {profile.goals}</Text>
-            </>
-          ) : (
-            <Text>No profile information available</Text>
-          )}
+        <View style={styles.header}>
+          <Text style={styles.appName}>
+            Welcome to Active Path🔥 
+            {profile && <Text style={styles.userName}>, {profile.name}. </Text>}
+          </Text> 
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('ProfileSetup')} style={styles.button}>
-            <Text style={styles.buttonText}>Setup Profile</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('SearchWorkout')} style={styles.button}>
-            <Text style={styles.buttonText}>Search Workout</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('ExerciseGoals')} style={styles.button}>
-            <Text style={styles.buttonText}>Exercise Goals</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('BeforeAfterPictures')} style={styles.button}>
-            <Text style={styles.buttonText}>Progress Pictures</Text>
-          </TouchableOpacity>
+        <View style={styles.contentContainer}>
+          <View style={styles.profileContainer}>
+            <ProfileInfoCard
+              email={auth.currentUser?.email}
+              name={profile?.name}
+              age={profile?.age}
+              fitnessLevel={profile?.fitnessLevel}
+              goals={profile?.goals}
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={() => navigation.navigate('ProfileSetup')} style={styles.button}>
+              <Text style={styles.buttonText}>Setup Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('SearchWorkout')} style={styles.button}>
+              <Text style={styles.buttonText}>Search Workout</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('ExerciseGoals')} style={styles.button}>
+              <Text style={styles.buttonText}>Exercise Goals</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('BeforeAfterPictures')} style={styles.button}>
+              <Text style={styles.buttonText}>Progress Pictures</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <TouchableOpacity onPress={handleSignOut} style={styles.signOutButton}>
           <Text style={styles.signOutText}>Sign out</Text>
@@ -90,32 +126,66 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 50,
   },
-  userInfo: {
+  header: {
     marginBottom: 20,
-  },
-  userEmail: {
-    color: '#000',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  userProfileInfo: {
-    color: '#000',
-    fontSize: 16,
-  },
-  buttonContainer: {
     alignItems: 'center',
+  },
+  appName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
+    marginTop: 10,
+  },
+  contentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 20,
+  },
+  profileContainer: {
+    marginRight: 20,
+  },
+  profileInfoCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    padding: 20,
+    borderRadius: 10,
+  },
+  profileInfoTitle: {
+    marginBottom: 10,
+  },
+  profileInfoTitleText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  profileInfoRow: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  profileInfoLabel: {
+    fontWeight: 'bold',
+    marginRight: 5,
+  },
+  profileInfoValue: {},
+  buttonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: '#000',
     width: '60%',
     paddingVertical: 15,
-    borderRadius: 10,
+    borderRadius: 30, // Modified border radius
     alignItems: 'center',
     marginBottom: 20,
   },
   buttonText: {
-    color: '#333',
+    color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
   },
@@ -123,7 +193,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f44336',
     width: '60%',
     paddingVertical: 15,
-    borderRadius: 10,
+    borderRadius: 30, // Modified border radius
     alignItems: 'center',
   },
   signOutText: {
