@@ -15,17 +15,26 @@ const LoginScreen = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         console.log('Registered with:', userCredential.user.email);
+        // Check if the registered user is an admin or regular user
+        if (userCredential.user.email === 'lizelle@test.com') {
+          navigation.replace('AdminHome');
+        } else {
+          navigation.replace('Home');
+        }
       })
       .catch(error => alert(error.message));
   };
 
   const handleLogin = () => {
-    console.log('Login button pressed');
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         console.log('Logged in with:', userCredential.user.email);
-        // Navigate to the appropriate screen
-        navigation.replace('Home');
+        // Check if the logged-in user is an admin or regular user
+        if (userCredential.user.email === 'lizelle@test.com') {
+          navigation.replace('AdminHome');
+        } else {
+          navigation.replace('Home');
+        }
       })
       .catch(error => alert(error.message));
   };
