@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet, ImageBackground } from 'react-native';
 import { doc, setDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
+
+const backgroundImage = require('../assets/test.jpg');
 
 export default function ProfileSetupScreen() {
   const [profile, setProfile] = useState({
@@ -59,57 +61,56 @@ export default function ProfileSetupScreen() {
   };
     
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Setup Profile</Text>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your name"
-          value={profile.name}
-          onChangeText={text => handleInputChange('name', text)}
+    <ImageBackground source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="repeat">
+      <View style={styles.container}>
+        <Text style={styles.title}>Welcome to Active Path</Text>
+        <Text style={styles.subtitle}>Setup Your Profile</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your name"
+            value={profile.name}
+            onChangeText={text => handleInputChange('name', text)}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your age"
+            value={profile.age}
+            onChangeText={text => handleInputChange('age', text)}
+            keyboardType="numeric"
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your fitness level"
+            value={profile.fitnessLevel}
+            onChangeText={text => handleInputChange('fitnessLevel', text)}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter your fitness goals (comma-separated)"
+            value={profile.goals}
+            onChangeText={text => handleInputChange('goals', text)}
+          />
+        </View>
+        {errors.message && <Text style={styles.error}>{errors.message}</Text>}
+        <Button
+          title={submitting ? "Submitting..." : "Submit"}
+          onPress={handleSubmit}
+          disabled={submitting}
         />
+        {setupSuccess && (
+          <Text style={styles.successMessage}>
+            Profile setup successful!
+          </Text>
+        )}
       </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Age</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your age"
-          value={profile.age}
-          onChangeText={text => handleInputChange('age', text)}
-          keyboardType="numeric"
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Fitness Level</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your fitness level"
-          value={profile.fitnessLevel}
-          onChangeText={text => handleInputChange('fitnessLevel', text)}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Goals (comma-separated)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter your fitness goals"
-          value={profile.goals}
-          onChangeText={text => handleInputChange('goals', text)}
-        />
-      </View>
-      {errors.message && <Text style={styles.error}>{errors.message}</Text>}
-      <Button
-        title={submitting ? "Submitting..." : "Submit"}
-        onPress={handleSubmit}
-        disabled={submitting}
-      />
-      {setupSuccess && (
-        <Text style={styles.successMessage}>
-          Profile setup successful!
-        </Text>
-      )}
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -119,28 +120,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Add opacity to the background
+  },
+  backgroundImage: {
+    flex: 1,
+    width:'100%',
+    height: '100%',
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#fff', // White color for text
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 20,
     marginBottom: 20,
+    color: '#fff', // White color for text
+    textAlign: 'center',
   },
   inputContainer: {
     width: '100%',
     marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)', // Add opacity to the background
+    borderRadius: 5,
   },
   input: {
     height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    width: '100%',
     paddingHorizontal: 10,
-    borderRadius: 5,
+    color: '#fff', // White color for text
   },
   error: {
     color: 'red',
