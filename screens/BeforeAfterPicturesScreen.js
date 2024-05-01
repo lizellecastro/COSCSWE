@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Image, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, Button, Image, StyleSheet, Alert, ScrollView, ImageBackground, TextInput } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { db, auth } from '../firebase';
 import { collection, doc, setDoc, getDocs, query, where } from 'firebase/firestore';
@@ -8,6 +8,8 @@ import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "fire
 export default function BeforeAfterPicturesScreen() {
   const [beforeImage, setBeforeImage] = useState(null);
   const [afterImage, setAfterImage] = useState(null);
+  const [beforeDescription, setBeforeDescription] = useState('');
+  const [afterDescription, setAfterDescription] = useState('');
   const [comparisonImages, setComparisonImages] = useState([]);
 
   const pickImage = async (type) => {
@@ -32,10 +34,6 @@ export default function BeforeAfterPicturesScreen() {
     }
 };
 
-  
-  console.log('Before Image URI:', beforeImage);
-  console.log('After Image URI:', afterImage);
-
   // This function handles the upload to Firebase Storage and then saves the download URL in Firestore
   const handleUpload = async () => {
     if (!beforeImage || !afterImage) {
@@ -46,7 +44,7 @@ export default function BeforeAfterPicturesScreen() {
       const beforeImageURL = await uploadImageAndStoreURL(beforeImage, 'before');
       const afterImageURL = await uploadImageAndStoreURL(afterImage, 'after');
       
-      setComparisonImages([...comparisonImages, { before: beforeImageURL, after: afterImageURL }]);
+      setComparisonImages([...comparisonImages, { before: { uri: beforeImageURL, description: beforeDescription }, after: { uri: afterImageURL, description: afterDescription } }]);
       Alert.alert('Success', 'Images uploaded successfully');
     } catch (error) {
       Alert.alert('Error', 'Failed to upload images');
@@ -54,8 +52,6 @@ export default function BeforeAfterPicturesScreen() {
     }
   };
 
-
-  
   // This function uploads the image to Firebase Storage and then saves the URL in Firestore
   const uploadImageAndStoreURL = async (uri, type) => {
     if (!auth.currentUser) {
@@ -107,7 +103,7 @@ export default function BeforeAfterPicturesScreen() {
       
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        images.push({ uri: data.uri, type: data.type });
+        images.push({ before: { uri: data.uri, description: data.beforeDescription }, after: { uri: data.uri, description: data.afterDescription } });
       });
       
       setComparisonImages(images);
@@ -115,33 +111,52 @@ export default function BeforeAfterPicturesScreen() {
   
     fetchImages();
   }, []);
-  
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Before and After Pictures</Text>
-      <View style={styles.imageContainer}>
-        <View style={styles.imageWrapper}>
-          <Button title="Upload Before Picture" onPress={() => pickImage('before')} />
-          {beforeImage && <Image source={{ uri: beforeImage }} style={styles.image} />}
+    <ImageBackground source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="repeat">
+      <View style={styles.container}>
+        <Text style={styles.heading}>Before and After Pictures</Text>
+        <View style={styles.imageContainer}>
+          <View style={styles.imageWrapper}>
+            <Button title="Upload Before Picture" onPress={() => pickImage('before')} />
+            {beforeImage && <Image source={{ uri: beforeImage }} style={styles.image} />}
+            <TextInput
+              style={styles.input}
+              placeholder="Description (Before)"
+              onChangeText={setBeforeDescription}
+              value={beforeDescription}
+            />
+          </View>
+          <View style={styles.imageWrapper}>
+            <Button title="Upload After Picture" onPress={() => pickImage('after')} />
+            {afterImage && <Image source={{ uri: afterImage }} style={styles.image} />}
+            <TextInput
+              style={styles.input}
+              placeholder="Description (After)"
+              onChangeText={setAfterDescription}
+              value={afterDescription}
+            />
+          </View>
         </View>
-        <View style={styles.imageWrapper}>
-          <Button title="Upload After Picture" onPress={() => pickImage('after')} />
-          {afterImage && <Image source={{ uri: afterImage }} style={styles.image} />}
-        </View>
+        <Button title="Upload Images" onPress={handleUpload} />
+        <ScrollView horizontal>
+          <View style={styles.comparisonImagesContainer}>
+            {comparisonImages.map((image, index) => (
+              <View key={index} style={styles.comparisonImagesWrapper}>
+                <View>
+                  <Image source={{ uri: image.before.uri }} style={styles.comparisonImage} />
+                  <Text>{image.before.description}</Text>
+                </View>
+                <View>
+                  <Image source={{ uri: image.after.uri }} style={styles.comparisonImage} />
+                  <Text>{image.after.description}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
       </View>
-      <Button title="Upload Images" onPress={handleUpload} />
-      <ScrollView horizontal>
-  <View style={styles.comparisonImagesContainer}>
-    {comparisonImages.map((image, index) => (
-      <View key={index} style={styles.comparisonImagesWrapper}>
-        <Image source={{ uri: image.uri }} style={styles.comparisonImage} />
-      </View>
-    ))}
-  </View>
-</ScrollView>
-
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -186,5 +201,21 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     margin: 5,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 5,
+    marginTop: 10,
+    width: 200,
+    textAlign: 'center',
   },
 });
