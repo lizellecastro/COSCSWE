@@ -1,11 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
-//import { Input, Card, Spin, Empty } from 'antd';   <----- This strictly only works for web apps, not mobile
+import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator, ScrollView, ImageBackground } from 'react-native';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import { debounce } from 'lodash';
-
-//const { Search } = Input; <----- caused issues on my (Lizelle) end as a mobile app
 
 export default function SearchWorkoutScreen() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -46,38 +43,70 @@ export default function SearchWorkoutScreen() {
     setLoading(false);
   }, 300), []);
 
-  // Under return, earlier this was not in the React Native format which made mobile app not work, so I changed it  
-
   return (
-    <View style={{ padding: 20, backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Search Workout</Text>
-      <TextInput
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-        placeholder="Search workouts..."
-        onChangeText={text => setSearchTerm(text)}
-        value={searchTerm}
-      />
-      <Button onPress={() => handleSearch(searchTerm)} title="Search" disabled={loading} />
-      {loading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        workouts.length === 0 ? (
-          <Text>No workouts found.</Text>
+    <ImageBackground source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="repeat">
+      <View style={styles.container}>
+        <Text style={styles.title}>Search Workout</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Search workouts..."
+          onChangeText={text => setSearchTerm(text)}
+          value={searchTerm}
+        />
+        <Button onPress={() => handleSearch(searchTerm)} title="Search" disabled={loading} />
+        {loading ? (
+          <ActivityIndicator size="large" />
         ) : (
-          <ScrollView>
-            {workouts.map(workout => (
-              <View key={workout.id} style={{ padding: 10, marginTop: 10, backgroundColor: '#ddd', borderRadius: 5 }}>
-                <Text>{workout.w_name}</Text>
-                <Text>Description: {workout.description}</Text>
-                <Text>Difficulty: {workout.difficulty}</Text>
-                <Text>Sets: {workout.sets}</Text>
-                <Text>Reps: {workout.reps}</Text>
-                <Text>Weight: {workout.weight_lbs} lbs</Text>
-              </View>
-            ))}
-          </ScrollView>
-        )
-      )}
-    </View>
+          workouts.length === 0 ? (
+            <Text>No workouts found.</Text>
+          ) : (
+            <ScrollView>
+              {workouts.map(workout => (
+                <View key={workout.id} style={styles.workoutContainer}>
+                  <Text>{workout.w_name}</Text>
+                  <Text>Description: {workout.description}</Text>
+                  <Text>Difficulty: {workout.difficulty}</Text>
+                  <Text>Sets: {workout.sets}</Text>
+                  <Text>Reps: {workout.reps}</Text>
+                  <Text>Weight: {workout.weight_lbs} lbs</Text>
+                </View>
+              ))}
+            </ScrollView>
+          )
+        )}
+      </View>
+    </ImageBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
+  workoutContainer: {
+    padding: 10,
+    marginTop: 10,
+    backgroundColor: '#ddd',
+    borderRadius: 5,
+  },
+});
