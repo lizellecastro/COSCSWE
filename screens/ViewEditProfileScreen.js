@@ -76,6 +76,7 @@ const ViewEditProfileScreen = () => {
                                 </TouchableOpacity>
                                 {selectedUserId === item.id && (
                                     <View style={styles.editContainer}>
+                                        <Text style={styles.label}>Name:</Text>
                                         <TextInput
                                             style={styles.input}
                                             value={editableProfile.name}
@@ -83,6 +84,7 @@ const ViewEditProfileScreen = () => {
                                             placeholder="Name"
                                             placeholderTextColor="#ffffff"
                                         />
+                                        <Text style={styles.label}>Age:</Text>
                                         <TextInput
                                             style={styles.input}
                                             value={editableProfile.age}
@@ -91,6 +93,7 @@ const ViewEditProfileScreen = () => {
                                             keyboardType="numeric"
                                             placeholderTextColor="#ffffff"
                                         />
+                                        <Text style={styles.label}>Fitness Level:</Text>
                                         <TextInput
                                             style={styles.input}
                                             value={editableProfile.fitnessLevel}
@@ -98,6 +101,7 @@ const ViewEditProfileScreen = () => {
                                             placeholder="Fitness Level"
                                             placeholderTextColor="#ffffff"
                                         />
+                                        <Text style={styles.label}>Fitness Goal:</Text>
                                         <TextInput
                                             style={styles.input}
                                             value={editableProfile.goals}
@@ -183,6 +187,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexGrow: 1,
         justifyContent: 'center',
+    },
+    label: {
+        color: '#ffffff',
+        marginBottom: 5,
     },
 });
 
