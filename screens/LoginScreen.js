@@ -1,27 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, TouchableOpacity, StyleSheet, Text, TextInput, View, Image } from 'react-native';
+import React, { useState } from 'react';
+import { KeyboardAvoidingView, TouchableOpacity, StyleSheet, Text, TextInput, View, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '../firebase';
+
+const backgroundImage = require('../assets/test.jpg');
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const navigation = useNavigation();
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      if (user) {
-        // Check if the logged-in user is an admin
-        if (user.email === 'lizelle@test.com') {
-          navigation.replace('AdminHome');
-        } else {
-          navigation.replace('Home');
-        }
-      }
-    });
-    return unsubscribe;
-  }, []);
 
   const handleSignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
@@ -32,42 +20,50 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
+    console.log('Login button pressed');
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         console.log('Logged in with:', userCredential.user.email);
+        // Navigate to the appropriate screen
+        navigation.replace('Home');
       })
       .catch(error => alert(error.message));
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <Image source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="cover" />
-      <View style={styles.overlay}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Email"
-            value={email}
-            onChangeText={text => setEmail(text)}
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={text => setPassword(text)}
-            style={styles.input}
-            secureTextEntry
-          />
+    <ImageBackground source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="repeat">
+      <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <View style={styles.overlay}>
+          <Text style={styles.welcomeText}>Welcome to</Text>
+          <Text style={styles.appName}>Active Path🔥</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Email"
+              value={email}
+              onChangeText={text => setEmail(text)}
+              style={styles.input}
+              placeholderTextColor="#fff"
+            />
+            <TextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={text => setPassword(text)}
+              style={styles.input}
+              secureTextEntry
+              placeholderTextColor="#fff"
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={handleLogin} style={styles.button}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleSignUp} style={[styles.button, styles.buttonOutline]}>
+              <Text style={styles.buttonOutlineText}>Register</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleLogin} style={styles.button}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSignUp} style={[styles.button, styles.buttonOutline]}>
-            <Text style={styles.buttonOutlineText}>Register</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 };
 
@@ -80,27 +76,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backgroundImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Adjust the opacity as needed
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  welcomeText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    letterSpacing: 1,
+  },
+  appName: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
+  },
   inputContainer: {
-    width: '80%'
+    width: '80%',
   },
   input: {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderRadius: 10,
-    marginTop: 5,
+    marginTop: 10,
+    color: '#fff',
   },
   buttonContainer: {
     width: '60%',
@@ -114,10 +127,11 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
+    marginTop: 15,
   },
   buttonOutline: {
     backgroundColor: '#fff',
-    marginTop: 5,
+    marginTop: 10,
     borderColor: '#0782F9',
     borderWidth: 2,
   },
@@ -130,5 +144,5 @@ const styles = StyleSheet.create({
     color: '#0782F9',
     fontWeight: '700',
     fontSize: 16,
-  }
+  },
 });
