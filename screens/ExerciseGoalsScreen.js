@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, ScrollView, Modal, ImageBackground } from 'react-native';
 //import PushNotification from 'react-native-push-notifications'; I have made this library a comment for now because I need to setup the push notification. 
-
 
 export default function ExerciseGoalsScreen() {
   const [goal, setGoal] = useState('');
@@ -63,89 +62,91 @@ export default function ExerciseGoalsScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Set Your Exercise Goals</Text>
+    <ImageBackground source={require('../assets/test.jpg')} style={styles.backgroundImage} resizeMode="repeat">
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.title}>Set Your Exercise Goals</Text>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Goal:</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={setGoal}
-          value={goal}
-          placeholder="e.g., Lose weight, Gain muscle, etc."
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Timeframe:</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={setTimeframe}
-          value={timeframe}
-          placeholder="e.g., 1 month, 3 months, etc."
-        />
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleGoalSetting}>
-        <Text style={styles.buttonText}>Set Goal</Text>
-      </TouchableOpacity>
-
-      <View style={styles.progressContainer}>
-        <Text style={styles.progressLabel}>Progress:</Text>
-        <Text style={styles.progressValue}>{progress}%</Text>
-      </View>
-
-      <Button title="Adjust Goal" onPress={handleGoalAdjustment} />
-
-      <Button title="Update Progress" onPress={handleProgressUpdate} />
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Set Reminder:</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={setReminder}
-          value={reminder}
-          placeholder="Enter reminder time"
-        />
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleReminderSet}>
-        <Text style={styles.buttonText}>Set Reminder</Text>
-      </TouchableOpacity>
-
-      <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setIsModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Adjust Goal</Text>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>New Goal:</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={setNewGoal}
-                value={newGoal}
-                placeholder="e.g., Lose weight, Gain muscle, etc."
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>New Timeframe:</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={setNewTimeframe}
-                value={newTimeframe}
-                placeholder="e.g., 1 month, 3 months, etc."
-              />
-            </View>
-            <Button title="Confirm" onPress={handleConfirmGoalAdjustment} />
-            <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
-          </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Goal:</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={setGoal}
+            value={goal}
+            placeholder="e.g., Lose weight, Gain muscle, etc."
+          />
         </View>
-      </Modal>
-    </ScrollView>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Timeframe:</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={setTimeframe}
+            value={timeframe}
+            placeholder="e.g., 1 month, 3 months, etc."
+          />
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleGoalSetting}>
+          <Text style={styles.buttonText}>Set Goal</Text>
+        </TouchableOpacity>
+
+        <View style={styles.progressContainer}>
+          <Text style={styles.progressLabel}>Progress:</Text>
+          <Text style={styles.progressValue}>{progress}%</Text>
+        </View>
+
+        <Button title="Adjust Goal" onPress={handleGoalAdjustment} />
+
+        <Button title="Update Progress" onPress={handleProgressUpdate} />
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Set Reminder:</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={setReminder}
+            value={reminder}
+            placeholder="Enter reminder time"
+          />
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleReminderSet}>
+          <Text style={styles.buttonText}>Set Reminder</Text>
+        </TouchableOpacity>
+
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Adjust Goal</Text>
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>New Goal:</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setNewGoal}
+                  value={newGoal}
+                  placeholder="e.g., Lose weight, Gain muscle, etc."
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>New Timeframe:</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setNewTimeframe}
+                  value={newTimeframe}
+                  placeholder="e.g., 1 month, 3 months, etc."
+                />
+              </View>
+              <Button title="Confirm" onPress={handleConfirmGoalAdjustment} />
+              <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
@@ -218,5 +219,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    justifyContent: 'center',
   },
 });
